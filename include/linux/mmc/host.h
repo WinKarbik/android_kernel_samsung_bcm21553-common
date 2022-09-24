@@ -111,6 +111,13 @@ struct mmc_host_ops {
 
 	/* optional callback for HC quirks */
 	void	(*init_card)(struct mmc_host *host, struct mmc_card *card);
+
+	/* functions for panic dumping */
+	int (*panic_probe)(struct raw_hd_struct *rhd, int type);
+	int (*panic_write)(struct raw_hd_struct *rhd, char *buf,
+			unsigned int offset, unsigned int len);
+	int (*panic_erase)(struct raw_hd_struct *rhd, unsigned int offset,
+			unsigned int len);
 };
 
 struct mmc_card;
@@ -253,6 +260,7 @@ static inline void *mmc_priv(struct mmc_host *host)
 #define mmc_classdev(x)	(&(x)->class_dev)
 #define mmc_hostname(x)	(dev_name(&(x)->class_dev))
 #define mmc_bus_needs_resume(host) ((host)->bus_resume_flags & MMC_BUSRESUME_NEEDS_RESUME)
+#define mmc_bus_manual_resume(host) ((host)->bus_resume_flags & MMC_BUSRESUME_MANUAL_RESUME)
 
 static inline void mmc_set_bus_resume_policy(struct mmc_host *host, int manual)
 {
